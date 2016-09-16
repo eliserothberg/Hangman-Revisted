@@ -1,4 +1,4 @@
-//set up dashes for letter replacement
+//set up dashes for letters
 
 var game = require('../Week11-Hangman/game');
 var prompt = require('prompt');
@@ -9,4 +9,4 @@ for(var i = 0; i < letters.length; i++) {
       dWord[i] = "_";
 }   
 
-module.exports.dispWord = dWord;
+module.exports.displayWord = dWord;

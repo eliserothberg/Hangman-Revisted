@@ -5,140 +5,148 @@ var letter = require('../Week11-Hangman/letter');
 var game = require('../Week11-Hangman/game');
 var word = require('../Week11-Hangman/word');
  
-var displayWord = letter.dispWord;
-var guessesRemaining = letters.length + 5;
+var displayWord = letter.displayWord;
 var wordDisplay = displayWord.join(' ');
-var theWord = wordDisplay;
+var letterString = letters.join(' ');
+var guessesRemaining = letters.length + 5;
+var compare = [];
+var lettersGuessed = [];
 var win = 0;
 var loss = 0;
-var displayWord = letter.dispWord;
-var guessesRemaining = letters.length + 5;
-var wordDisplay = displayWord.join(' ');
-var theWord = wordDisplay;
-
 
 //this uses word chosen in game.js
 function PlayGame(gameplay) {
   this.gameplay = gameplay;
-  this.letters = game.letters;
+  this.letters = game.letter;
   console.log("gameplay letters = " + letters)
 }
 
-//supposed to end the game
+//show end of game results with moon/stars for a win, martini for a loss
 PlayGame.prototype.isFinished = function() {
-  if (guessesRemaining == 0 && letters == displayWord) {
-    playerGame.callNewGame();
+  if (!wordDisplay.includes('_')) {
+    console.log(" letters = " + letters);
+    console.log(" displayWord = " + displayWord);
+    console.log("type letters = " + typeof letters);
+    console.log("type displayWord = " + typeof displayWord);
+
+    console.log('\n          ★ ° ☾ ☆ ¸. ¸ ★ . . • ○ ° ★ . . ☾ . ¸ . ° ¸ .★ . . °☆');
+    console.log('\n                         Cheers! Well done!');
+    console.log('\n           ● ¸ ☆ ° ☾ ° ¸ ● ¸ . ★ ° .  • ° . ☆ . ○ ¸ ● ¸ ★ • ☾');
+    win++;
+    console.log("Wins: " + win);
+    console.log("Losses: " + loss);
+    console.log("******************************************************************************"); 
+    guessesRemaining = 0;
+    playGame.callNewGame();
+    return true;
+  } 
+  else if (letterString != wordDisplay && guessesRemaining === 0) { 
+    console.log(" letters = " + letters);
+    console.log(" displayWord = " + displayWord);
+    console.log("type letters = " + typeof letters);
+    console.log("type displayWord = " + typeof displayWord);
+    console.log(" wordDisplay = " + wordDisplay);
+    console.log("type wordDisplay = " + typeof wordDisplay);
+    console.log(" letterString = " + letterString);
+    console.log("type letterString = " + typeof letterString);
+    console.log("wordDisplay includes _ = " + wordDisplay.includes('_'));
+    
+    console.log('\n\nSorry you lost- but here\'s a martini!');
+    console.log("                           _______/_  ");
+    console.log("                           \\     Ø / ");
+    console.log("                            \\   Ø /  ");
+    console.log("                             \\ Ø /   ");
+    console.log("                              \\ /    ");
+    console.log("                               |      ");
+    console.log("                               |      ");
+    console.log("                               |      ");
+    console.log("                              ===     ");
+    loss++;
+    console.log("Wins: " + win);
+    console.log("Losses: " + loss);
+    console.log("******************************************************************************"); 
+    playGame.callNewGame();
+    return true;
   }
+  return false;
 }
 
-// show word to guess
+// show word to guess as dashes from letter.js
 console.log("******************************************************************************");
       console.log("                   " + displayWord.join(' '));
-
-var compare = [];
-var lettersGuessed = [];
-var x = [];
 
 //uses word processed in word.js
 PlayGame.prototype.guessing = function(cb) {
   var self = this;
   wordDisplay = displayWord.join(' ');
-  theWord = wordDisplay;
 
   //gets user input
-  if(this.guessesRemaining != 0 && theWord.includes('_')
-    ) {
-  var userGuess;
+  if(guessesRemaining > 0 && wordDisplay.includes('_')) { //maybe uneeded?- nope, needed
+    var userGuess;
   
-  var schema = {
-    properties: {
-      inputGuess: {
-        description: 'Guess a letter',
-        pattern: /^[a-zA-Z\s\-]+$/,
-        message: 'Your guess must be a letter.',
-        required: true
-      },
-    }
-  };
-
-  prompt.start();
-    prompt.get(schema, function (err, result) {
-    userGuess = result.inputGuess.toUpperCase();
-    lettersGuessed += userGuess + ",";
-    module.exports.userGuess = userGuess;
-   
-    // word.makeChoice();
-    
-    // console.log("You guessed :" + userGuess);
-    // console.log("Letters Guessed: " + lettersGuessed);
-    // console.log("Guesses remaining: " + guessesRemaining);
-
-    //determines if letter is correct, incorrect, or already guessed
-    for(var i = 0; i < letters.length; i++) {
-      if (userGuess === letters[i]) {
-        displayWord[i] = userGuess;
+    var schema = {
+      properties: {
+        inputGuess: {
+          description: 'Guess a letter',
+          pattern: /^[a-zA-Z\s\-]+$/,
+          message: 'Your guess must be a letter.',
+          required: true
+        },
       }
-    }
-   
-    var inWord = letters.indexOf(userGuess) != -1;
-    var alreadyGuessed = x.indexOf(userGuess) != -1;
-    x = x + userGuess;
-    compare = letters;
-    
-    if (alreadyGuessed == true) {
-      console.log("\n*****You already guessed this letter.*****\n");
-    }
-    else if (inWord == false && userGuess != lettersGuessed) {
-      console.log('\nYou guessed: ' + userGuess);
-      console.log("\nSorry, that is incorrect.\n");
-      guessesRemaining--;   
-    } 
-    else if (inWord == true && userGuess != lettersGuessed) {
-      console.log("\nCorrect!\n");
-      guessesRemaining--;
-    }
-    // else {console.log("else"); 
-    // }
-      console.log("******************************************************************************");
-      console.log("                   "+ displayWord.join(' '));
-      console.log("\n               Guesses Remaining: "  + guessesRemaining);
-      console.log("              Letters guessed:  "  + lettersGuessed); 
-      console.log("******************************************************************************"); 
+    };
+
+    prompt.start();
+    prompt.get(schema, function (err, result) {
+      userGuess = result.inputGuess.toUpperCase();
+      lettersGuessed += userGuess + ",";
       
-      cb();
-    });
-    
-  // if loss, show martini, if won, show moon/stars
-  // PlayGame.prototype.endGame = function() {
-     if (guessesRemaining === 0 && letters != displayWord) {      
-      console.log('\nSorry you lost- but here\'s a martini!');
-      console.log("                           _______/_  ");
-      console.log("                           \\     Ø / ");
-      console.log("                            \\   Ø /  ");
-      console.log("                             \\ Ø /   ");
-      console.log("                              \\ /    ");
-      console.log("                               |      ");
-      console.log("                               |      ");
-      console.log("                               |      ");
-      console.log("                              ===     ");
-      loss++;
-      console.log("Wins: " + win);
-      console.log("Losses: " + loss);
-      playGame.callNewGame();
-    }
-    if (letters == displayWord && guessesRemaining >= 0) {
-      console.log('\n        ★ ° ☾ ☆ ¸. ¸ ★ . . • ○ ° ★ . . ☾ . ¸ . ° ¸ .★ . . °☆');
-      console.log('\n                         Cheers! Well done!');
-      console.log('\n        ● ¸ . ° ☾ ° ¸. ● ¸ . ★ ° . . • ° . * . . ¸ ● ¸ ★ . ☾');
-      win++;
-      console.log("Wins: " + win);
-      console.log("Losses: " + loss);
-      guessesRemaining = 0;
-      playGame.newGame();
-    } 
-  }
-}
-// }
+   
+      // word.makeChoice();
+
+      //determines if letter is correct, incorrect, or already guessed
+      // PlayGame.prototype.sorting = function(cb) { 
+      for(var i = 0; i < letters.length; i++) {
+        if (userGuess === letters[i]) {
+          displayWord[i] = userGuess;
+        }
+      }
+     
+      var inWord = letters.indexOf(userGuess) != -1;
+      var alreadyGuessed = compare.indexOf(userGuess) != -1;
+      compare.push(userGuess);
+      // compare = letters;
+
+      if (guessesRemaining === 0) {
+        cb(); 
+      }
+      
+      if (alreadyGuessed == true) {
+        console.log("\n*****You already guessed this letter.*****\n");
+      }
+      else if (inWord == false && userGuess != lettersGuessed) {
+        console.log('\nYou guessed: ' + userGuess);
+        console.log("\nSorry, that is incorrect.\n");
+        guessesRemaining--;   
+      } 
+      else if (inWord == true && userGuess != lettersGuessed) {
+        console.log("\nCorrect!\n");
+        guessesRemaining--;
+      }
+      // else if (guessesRemaining === 0) {return; }
+        console.log("******************************************************************************");
+        console.log("                   "+ displayWord.join(' '));
+        console.log("\n               Guesses Remaining: "  + guessesRemaining);
+        console.log("              Letters guessed:  "  + lettersGuessed); 
+        console.log("******************************************************************************"); 
+        
+      //   cb();
+      // playGame.sorting();
+      // });
+
+       cb();
+      }); 
+    };
+  }   
 
 //function to ensure game is played through to the end, then ends
 PlayGame.prototype.play = function(cb) {
@@ -158,29 +166,35 @@ PlayGame.prototype.callNewGame = function(cb) {
     inquirer.prompt([{
       type: "input",
       name: "input",
-      message: "Enter y to play a new game."
-    }]).then(function(answer) {
-      if (answer.input === y || Y) {
-        //reset how??????
-      displayWord = [];
-      playGame();
-      console.log("New Game!");
+      message: "Press enter to play a new game."
 
-      cb();
+    }]).then(function(answer) {
+      if (answer.input != null && e.keyCode == 13) {
+        console.log("foo");
+        //reset ??????
+      displayWord = [];
+      letters = game.letters;
+      PlayGame();
+      console.log("New Game!");
+      cb(true);
       }
     });
   } 
   else {
     return;
-    cb();
+    cb(false);
   }
 }
   
 //play game and prompt for another
+function hangman() {
+
+}
 var playGame = new PlayGame(game.names);
 playGame.play(function() {
-  playGame.isFinished();
-  playGame.rightWrong();
-  playGame.endGame(); 
+  console.log("Game is done!");
+  // playGame.guessing(); 
+  // playGame.isFinished();
+  // playGame.rightWrong(); 
   playGame.callNewGame();
 });
