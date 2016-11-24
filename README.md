@@ -1,1 +1,3 @@
-# Week11-Hangman
+#Hangman
+
+ Hangman that runs entirely with Node.js.
